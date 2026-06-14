@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "reflex-blossom-carousel"
+version = "0.0.1"
+description = "Reflex wrapper for Blossom Carousel — a native-scroll-first carousel with pointer drag support."
+readme = "README.md"
+license = { text = "Apache-2.0" }
+requires-python = ">=3.10"
+authors = [{ name = "Ernesto Crespo", email = "ecrespo@gmail.com" }]
+keywords = ["reflex","reflex-custom-components","carousel","blossom","slider","scroll"]
+
+dependencies = ["reflex>=0.9.5.post2"]
+
+classifiers = ["Development Status :: 4 - Beta"]
+
+[project.urls]
+Homepage = "https://github.com/ecrespo/reflex-blossom-carousel"
+Source = "https://github.com/ecrespo/reflex-blossom-carousel"
+"Bug Tracker" = "https://github.com/ecrespo/reflex-blossom-carousel/issues"
+"Upstream (blossom-carousel)" = "https://github.com/jespervos/blossom-carousel"
+
+[project.optional-dependencies]
+dev = ["build", "twine"]
+
+[tool.setuptools.packages.find]
+where = ["custom_components"]
