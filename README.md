@@ -2,13 +2,13 @@
 
 A [Reflex](https://reflex.dev) custom component that wraps [Blossom Carousel](https://github.com/jespervos/blossom-carousel) — a **native-scroll-first** carousel enhanced with physics-based drag for pointer devices (0 KB on touch).
 
-> Status: **early development / scaffold**. The component wrapper is not implemented yet — this repo currently contains the project base (Reflex installed via `uv`) and the full Spec-Driven Design (SDD) plan under [`specs/`](specs/).
+> Status: **beta**. The component wrapper is implemented and tested. Design and API are documented under [`specs/`](specs/) following Spec-Driven Design (SDD).
 
 ## Why
 
 Reflex has no built-in carousel. Blossom Carousel builds on native browser scrolling (full performance + accessibility) and ships an official React package (`@blossom-carousel/react`, MIT). This project wraps it so you can use it from pure Python in Reflex.
 
-## Planned usage
+## Usage
 
 ```python
 import reflex as rx
@@ -33,7 +33,7 @@ def index() -> rx.Component:
 
 See the full API in [`specs/api/component-api-v1.md`](specs/api/component-api-v1.md).
 
-## Installation (once published)
+## Installation
 
 ```bash
 pip install reflex-blossom-carousel
