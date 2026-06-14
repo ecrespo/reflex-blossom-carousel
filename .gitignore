@@ -19,3 +19,4 @@ venv/
 # Misc
 .DS_Store
 assets/external/
+.idea/

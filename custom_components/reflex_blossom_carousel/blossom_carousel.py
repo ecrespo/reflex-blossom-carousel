@@ -1,58 +1,111 @@
+"""Reflex custom component BlossomCarousel.
 
-"""Reflex custom component BlossomCarousel."""
+Thin wrapper around ``@blossom-carousel/react`` — a native-scroll-first carousel
+that adds physics-based drag for pointer devices (0 KB on touch).
 
-# For wrapping react guide, visit https://reflex.dev/docs/wrapping-react/overview/
+Upstream: https://github.com/jespervos/blossom-carousel
+See the API contract in ``specs/api/component-api-v1.md`` and the design
+decisions (DD-001 wrap the React package, DD-004 inject base CSS) in
+``specs/technical/architecture.md``.
+"""
+
+import json
 
 import reflex as rx
+from reflex.event import EventSpec
+from reflex.vars import Var
 
-# Some libraries you want to wrap may require dynamic imports.
-# This is because they they may not be compatible with Server-Side Rendering (SSR).
-# To handle this in Reflex, all you need to do is subclass `NoSSRComponent` instead.
-# For example:
-# from reflex_base.components.component import NoSSRComponent
-# class BlossomCarousel(NoSSRComponent):
-#     pass
+# Pinned npm versions (see specs §8 Compatibilidad y Versionado).
+_REACT_PKG = "@blossom-carousel/react@^1.1.1"
+_CORE_PKG = "@blossom-carousel/core@^1.1.7"
+_CORE_STYLE = "@blossom-carousel/core/style.css"
+
+# Valid `align` values for prev()/next() (specs/api/component-api-v1.md §4).
+_ALIGN_VALUES = ("start", "center", "end")
 
 
 class BlossomCarousel(rx.Component):
-    """BlossomCarousel component."""
+    """Wrapper of ``@blossom-carousel/react``'s ``BlossomCarousel``."""
 
-    # The React library to wrap.
-    library = "Fill-Me"
+    # The React library to wrap (named export -> is_default = False).
+    library = _REACT_PKG
+    tag = "BlossomCarousel"
+    is_default = False
 
-    # The React component tag.
-    tag = "Fill-Me"
+    # The React runtime + base CSS live in @blossom-carousel/core.
+    lib_dependencies: list[str] = [_CORE_PKG]
 
-    # If the tag is the default export from the module, you must set is_default = True.
-    # This is normally used when components don't have curly braces around them when importing.
-    # is_default = True
+    # Props mapped to the upstream React component.
+    # `as` is a reserved word in Python, so we expose `as_` and rename it
+    # back to `as` at compile time via `_rename_props`.
+    as_: Var[str] = Var.create("div")  # container HTML tag, e.g. "ul"
 
-    # If you are wrapping another components with the same tag as a component in your project
-    # you can use aliases to differentiate between them and avoid naming conflicts.
-    # alias = "OtherBlossomCarousel"
+    # Cyclic/infinite scroll (experimental upstream).
+    repeat: Var[bool] = Var.create(False)
 
-    # The props of the React component.
-    # Note: when Reflex compiles the component to Javascript,
-    # `snake_case` property names are automatically formatted as `camelCase`.
-    # The prop names may be defined in `camelCase` as well.
-    # some_prop: rx.Var[str] = "some default value"
-    # some_other_prop: rx.Var[int] = 1
+    # Runtime load strategy: "conditional" (0 KB on touch) or "always".
+    load: Var[str] = Var.create("conditional")
 
-    # By default Reflex will install the library you have specified in the library property.
-    # However, sometimes you may need to install other libraries to use a component.
-    # In this case you can use the lib_dependencies property to specify other libraries to install.
-    # lib_dependencies: list[str] = []
+    # Rename `as_` -> `as` so the compiled prop matches the React API.
+    _rename_props: dict[str, str] = {"as_": "as"}
 
-    # Event triggers declaration if any.
-    # Below is equivalent to merging `{ "on_change": lambda e: [e] }`
-    # onto the default event triggers of parent/base Component.
-    # The function defined for the `on_change` trigger maps event for the javascript
-    # trigger to what will be passed to the backend event handler function.
-    # on_change: rx.EventHandler[lambda e: [e]]
+    def add_imports(self) -> dict:
+        """Inject the carousel's base stylesheet (DD-004).
 
-    # To add custom code to your component
-    # def _get_custom_code(self) -> str:
-    #     return "const customCode = 'customCode';"
+        The empty library key produces a side-effect CSS import:
+        ``import "@blossom-carousel/core/style.css";``.
+        """
+        return {"": _CORE_STYLE}
+
+    # ------------------------------------------------------------------ #
+    # RF-004: imperative navigation (Strategy A, DD-003).
+    #
+    # Upstream exposes `prev`/`next` on the React ref handle via
+    # `useImperativeHandle`. Reflex attaches that handle to a `useRef` when the
+    # component has an `id`, and registers it in the global `refs` map as
+    # `refs["ref_<id>"]`. From an event handler we reach the handle there and
+    # call its method. Optional chaining (`?.current?.`) makes the call a silent
+    # no-op if the runtime has not loaded yet (touch + conditional load).
+    # ------------------------------------------------------------------ #
+
+    def prev(self, align: str | None = None) -> EventSpec:
+        """Scroll to the previous slide.
+
+        Args:
+            align: How to align the target slide ("start", "center", "end").
+                ``None`` uses upstream's default alignment.
+
+        Returns:
+            An ``EventSpec`` usable as an ``on_click`` handler.
+        """
+        return self._navigate("prev", align)
+
+    def next(self, align: str | None = None) -> EventSpec:
+        """Scroll to the next slide.
+
+        Args:
+            align: How to align the target slide ("start", "center", "end").
+                ``None`` uses upstream's default alignment.
+
+        Returns:
+            An ``EventSpec`` usable as an ``on_click`` handler.
+        """
+        return self._navigate("next", align)
+
+    def _navigate(self, method: str, align: str | None) -> EventSpec:
+        """Build the EventSpec that calls the carousel's ref handle method."""
+        ref = self.get_ref()
+        if ref is None:
+            raise ValueError(
+                "blossom_carousel requires an `id` to use prev()/next() "
+                "(it is needed to locate the carousel's ref handle)."
+            )
+        if align is not None and align not in _ALIGN_VALUES:
+            raise ValueError(
+                f"align must be one of {_ALIGN_VALUES} or None, got {align!r}."
+            )
+        options = "" if align is None else f"{{ align: {json.dumps(align)} }}"
+        return rx.call_script(f'refs["{ref}"]?.current?.{method}({options})')
 
 
 blossom_carousel = BlossomCarousel.create

@@ -12,7 +12,9 @@ requires-python = ">=3.10"
 authors = [{ name = "Ernesto Crespo", email = "ecrespo@gmail.com" }]
 keywords = ["reflex","reflex-custom-components","carousel","blossom","slider","scroll"]
 
-dependencies = ["reflex>=0.9.5.post2"]
+dependencies = [
+    "reflex>=0.9.5.post2",
+]
 
 classifiers = ["Development Status :: 4 - Beta"]
 
@@ -23,7 +25,10 @@ Source = "https://github.com/ecrespo/reflex-blossom-carousel"
 "Upstream (blossom-carousel)" = "https://github.com/jespervos/blossom-carousel"
 
 [project.optional-dependencies]
-dev = ["build", "twine"]
+dev = ["build", "twine", "pytest"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
 
 [tool.setuptools.packages.find]
 where = ["custom_components"]
