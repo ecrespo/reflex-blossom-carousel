@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "reflex-blossom-carousel"
-version = "0.0.1"
+version = "0.1.1"
 description = "Reflex wrapper for Blossom Carousel — a native-scroll-first carousel with pointer drag support."
 readme = "README.md"
 license = { text = "Apache-2.0" }
