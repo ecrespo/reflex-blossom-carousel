@@ -6,10 +6,10 @@
 |---|---|
 | **Autor** | Ernesto Crespo |
 | **Estado** | `DRAFT` |
-| **Versión** | 1.0 |
+| **Versión** | 1.1 |
 | **Fecha** | 2026-06-14 |
 | **Reviewers** | — |
-| **Última actualización** | 2026-06-14 |
+| **Última actualización** | 2026-10-24 |
 
 ---
 
@@ -78,13 +78,13 @@ Blossom Carousel ya publica un paquete React oficial (`@blossom-carousel/react`,
 - [ ] Control imperativo `prev()` / `next()` (con `align`) desde el estado de Reflex.
 - [ ] App demo funcional + documentación (README con ejemplos).
 - [ ] Tests del wrapper (compilación/render) y CI.
-- [ ] Empaquetado y publicación en PyPI (`reflex component build` + `uv publish`).
+- [ ] Empaquetado y publicación en PyPI (`uv build` + `uv publish`; `reflex component` fue eliminado en Reflex 0.10).
 
 ### 5.2 Out of Scope (Excluido)
 - Reescribir la física/lógica del carrusel — se reutiliza el paquete upstream tal cual.
 - Mantener wrappers para Vue/Svelte/Web Components (upstream ya los provee).
 - Theming visual propio: la configuración es por CSS del usuario, como en upstream.
-- Soporte para versiones de Reflex < 0.9.5.
+- Soporte para versiones de Reflex < 0.10 (a partir del paquete 0.2.0; usar `reflex-blossom-carousel==0.1.1` con Reflex 0.9.x).
 
 ### 5.3 Futuras Consideraciones
 - Exponer eventos de scroll/snap (`on_snap_change`, `overscroll`) como `EventHandler` de Reflex cuando upstream estabilice esos eventos.
@@ -146,7 +146,7 @@ Blossom Carousel ya publica un paquete React oficial (`@blossom-carousel/react`,
 - Mantener el scroll nativo y la navegación por teclado del contenedor (heredado de upstream). No introducir regresiones de accesibilidad en el wrapper.
 
 ### Compatibilidad
-- Python >= 3.10. Reflex >= 0.9.5.post2. React >= 18 (lo aporta Reflex en el frontend).
+- Python >= 3.11. Reflex >= 0.10.0. React >= 18 (lo aporta Reflex en el frontend).
 - Funcionar con SSR de Reflex sin errores de hidratación.
 
 ### Mantenibilidad
@@ -170,7 +170,7 @@ Blossom Carousel ya publica un paquete React oficial (`@blossom-carousel/react`,
 |---|---|---|---|---|
 | `@blossom-carousel/react` | npm (runtime frontend) | Jesper Vos | v1.1.1, MIT | Cambios de API en upstream |
 | `@blossom-carousel/core` | npm (CSS + runtime) | Jesper Vos | v1.1.7, MIT | Idem |
-| Reflex | Framework Python | Reflex Labs | 0.9.5.post2 | Cambios en API de wrapping |
+| Reflex | Framework Python | Reflex Labs | 0.10.0 | Cambios en API de wrapping |
 | PyPI | Registro de paquetes | PSF | Activo | Bajo |
 | GitHub + gh CLI | Hosting/repos | GitHub | Activo | Requiere auth del usuario |
 

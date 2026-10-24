@@ -4,7 +4,7 @@
 |---|---|
 | **Autor** | Ernesto Crespo |
 | **Estado** | `DRAFT` |
-| **Versión** | 1.0 |
+| **Versión** | 1.1 |
 | **Fecha** | 2026-06-14 |
 | **PRD** | ../prd/reflex-blossom-carousel.md |
 
@@ -147,7 +147,8 @@ CSS del usuario (en `assets/` o `add_custom_code`), equivalente al demo upstream
 
 - **SemVer.** v1 del contrato = props `as_`, `repeat`, `load` + métodos `prev`/`next`.
 - Anclaje npm: `@blossom-carousel/react@^1.1.1`, `@blossom-carousel/core@^1.1.7`.
-- Reflex: `>=0.9.5.post2`.
+- Reflex: `>=0.10.0` (desde el paquete `0.2.0`; `0.1.x` soportaba `>=0.9.5.post2`).
+- Python: `>=3.11` (Reflex 0.10 eliminó el soporte de 3.10).
 
 ---
 
@@ -156,3 +157,4 @@ CSS del usuario (en `assets/` o `add_custom_code`), equivalente al demo upstream
 | Versión | Fecha | Autor | Cambios |
 |---|---|---|---|
 | 1.0 | 2026-06-14 | Ernesto Crespo | Versión inicial |
+| 1.1 | 2026-10-24 | Ernesto Crespo | Compatibilidad actualizada a Reflex `>=0.10.0` y Python `>=3.11` (paquete 0.2.0). Contrato de props/métodos sin cambios. |
