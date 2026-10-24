@@ -66,10 +66,19 @@ Reflex 0.10 removed the `reflex component` CLI (`init` / `build` / `publish` / `
 uv run python -m reflex_base.utils.pyi_generator custom_components/reflex_blossom_carousel
 
 uv build                      # sdist + wheel in dist/ (the wheel ships the .pyi stub)
-uv publish                    # upload to PyPI (token via UV_PUBLISH_TOKEN or ~/.pypirc + twine)
 ```
 
-Bump `version` in `pyproject.toml` for every release. See [`CHANGELOG.md`](CHANGELOG.md).
+Releases are published to PyPI by the [`Publish`](.github/workflows/publish.yml) workflow through [Trusted Publishing](https://docs.pypi.org/trusted-publishers/) (no API token). To release:
+
+```bash
+uv version --bump patch       # or minor / major; updates pyproject.toml and uv.lock
+# update CHANGELOG.md, open a PR, merge it into main once CI is green, then:
+git checkout main && git pull
+git tag v$(uv version --short)
+git push origin v$(uv version --short)
+```
+
+The workflow checks that the tag matches `version` in `pyproject.toml`, runs the tests, builds and checks the distributions, publishes them to PyPI and creates the GitHub Release. See [`CHANGELOG.md`](CHANGELOG.md).
 
 Project layout:
 
