@@ -41,18 +41,35 @@ pip install reflex-blossom-carousel
 uv add reflex-blossom-carousel
 ```
 
+Requires Python ≥ 3.11 and Reflex ≥ 0.10.0. For Reflex 0.9.x, pin `reflex-blossom-carousel==0.1.1`.
+
 ## Development
 
-This project is managed with [`uv`](https://docs.astral.sh/uv/) and pinned to Python 3.13 (Reflex does not yet support 3.14).
+Requires **Python ≥ 3.11** and **Reflex ≥ 0.10.0**. This project is managed with [`uv`](https://docs.astral.sh/uv/); local development uses Python 3.13 (`.python-version`), and CI also checks 3.11 and 3.14.
 
 ```bash
-uv sync                       # create the venv and install deps (editable local package)
+uv sync --all-extras          # create the venv and install deps (editable local package)
+uv run pytest                 # unit tests
 uv run python -c "import reflex_blossom_carousel"   # smoke test
 
 # run the demo app
 cd blossom_carousel_demo
 uv run reflex run
 ```
+
+### Building and releasing
+
+Reflex 0.10 removed the `reflex component` CLI (`init` / `build` / `publish` / `share`). The package is now built with standard tooling:
+
+```bash
+# Regenerate the .pyi type stubs (only needed when the component's props change)
+uv run python -m reflex_base.utils.pyi_generator custom_components/reflex_blossom_carousel
+
+uv build                      # sdist + wheel in dist/ (the wheel ships the .pyi stub)
+uv publish                    # upload to PyPI (token via UV_PUBLISH_TOKEN or ~/.pypirc + twine)
+```
+
+Bump `version` in `pyproject.toml` for every release. See [`CHANGELOG.md`](CHANGELOG.md).
 
 Project layout:
 

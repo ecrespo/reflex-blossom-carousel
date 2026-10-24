@@ -6,7 +6,7 @@
 |---|---|
 | **Autor** | Ernesto Crespo |
 | **Estado** | `DRAFT` |
-| **Versión** | 1.0 |
+| **Versión** | 1.1 |
 | **Fecha** | 2026-06-14 |
 | **PRD Relacionado** | ../prd/reflex-blossom-carousel.md |
 | **API Spec Relacionado** | ../api/component-api-v1.md |
@@ -27,7 +27,7 @@ La decisión central es **envolver el paquete React de upstream** (no el `core` 
 - **Correctitud:** El componente compila y renderiza sin errores de hidratación; props mapeadas fielmente a upstream.
 - **Rendimiento:** No degradar el "0 KB en táctil"; no bloquear el render inicial.
 - **Mantenibilidad:** Wrapper pequeño (<150 líneas), tipado, con tests de compilación; alineado a versiones npm ancladas.
-- **Operabilidad:** Build y publish reproducibles con `uv` + `reflex component build`; CI con tests.
+- **Operabilidad:** Build y publish reproducibles con `uv build` + `uv publish`; CI con tests (GitHub Actions).
 
 ## 3. Arquitectura Propuesta
 
@@ -55,7 +55,7 @@ La decisión central es **envolver el paquete React de upstream** (no el `core` 
 | `@blossom-carousel/react` | npm / React | Componente React oficial (drag + scroll nativo) |
 | `@blossom-carousel/core` | npm / TS + CSS | Lógica vanilla y estilos base |
 | App demo `blossom_carousel_demo` | Reflex | Probar el componente en una app real |
-| Empaquetado | `uv` + setuptools + `reflex component build` | Construir y publicar el paquete Python |
+| Empaquetado | `uv build` (setuptools) + generador de stubs `reflex_base.utils.pyi_generator` | Construir y publicar el paquete Python |
 
 ### 3.3 Flujo de Datos
 
@@ -137,7 +137,8 @@ La decisión central es **envolver el paquete React de upstream** (no el `core` 
 
 - **Decisión:** Usar el scaffold oficial `reflex component init` (estructura `custom_components/`, demo app) pero gestionar entorno/dependencias/lock con `uv` (`uv.lock`, `uv sync`), manteniendo el `pyproject.toml` setuptools generado.
 - **Justificación:** Combina el layout estándar publicable con la velocidad/reproducibilidad de `uv`.
-- **Consecuencias:** Build con `reflex component build`; publish con `uv publish`.
+- **Consecuencias:** Build con `uv build`; publish con `uv publish`.
+- **Actualización (2026-10-24, Reflex 0.10):** el CLI `reflex component` (`init`/`build`/`publish`/`share`) fue eliminado. Los stubs `.pyi` se regeneran con `python -m reflex_base.utils.pyi_generator custom_components/reflex_blossom_carousel` y se versionan en el repo; el wheel se construye con `uv build`. Se mantiene el layout `custom_components/` existente.
 
 ## 5. Patrones y Convenciones
 
@@ -147,7 +148,7 @@ La decisión central es **envolver el paquete React de upstream** (no el `core` 
 reflex-blossom-carousel/
 ├── pyproject.toml                 # setuptools build backend; gestionado con uv
 ├── uv.lock                        # lockfile de uv
-├── .python-version                # 3.13
+├── .python-version                # 3.13 (soportado: >=3.11)
 ├── README.md
 ├── specs/                         # Specs SDD (este conjunto de documentos)
 │   ├── prd/
@@ -225,14 +226,14 @@ Runtime: N/A (UI sin backend). Desarrollo/CI: tests de compilación y render com
 | Unit | > 80 % del wrapper | pytest | Que la clase declara library/tag/props correctos; render a dict/JS contiene `BlossomCarousel`, `as`, `repeat`, `load` |
 | Compilación | Build del frontend | `reflex export`/compilación en CI | Que la app demo compila con el componente |
 | Manual/E2E | Happy paths | `reflex run` + navegador | Drag en desktop, scroll en táctil, prev/next |
-| Build/Publish | Artefactos | `reflex component build` (dry-run) | Que el paquete se construye |
+| Build/Publish | Artefactos | `uv build` + verificación de `.pyi` en el wheel (CI) | Que el paquete se construye |
 
 ## 9. Plan de Migración / Rollout
 
 ### 9.1 Estrategia de Deployment (publicación)
 - [ ] Publicar `v0.1.0` en TestPyPI primero, validar instalación.
 - [ ] Publicar en PyPI.
-- [ ] `reflex component share` para la galería.
+- [ ] Registro en la galería de Reflex (el comando `reflex component share` ya no existe en Reflex 0.10).
 
 ### 9.2 Backward Compatibility
 - API v1 (`as_`, `repeat`, `load`, `prev`, `next`) estable bajo SemVer.

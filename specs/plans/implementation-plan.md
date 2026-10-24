@@ -126,10 +126,10 @@ Cinco fases incrementales para llevar `reflex-blossom-carousel` de un scaffold a
 
 | ID | Tarea | Responsable | Estimación | Dependencia | Estado |
 |---|---|---|---|---|---|
-| F5-01 | `reflex component build` (genera `dist/`) | Ernesto | 0.3d | F4 | ☐ |
+| F5-01 | `uv build` (genera `dist/`; `reflex component build` eliminado en Reflex 0.10) | Ernesto | 0.3d | F4 | ☐ |
 | F5-02 | Publicar en **TestPyPI** (`uv publish --index testpypi`) y validar `pip install` | Ernesto | 0.5d | F5-01 | ☐ |
 | F5-03 | Publicar en **PyPI** (`uv publish`) | Ernesto | 0.3d | F5-02 | ☐ |
-| F5-04 | Tag `v0.1.0` + GitHub Release + `reflex component share` (galería) | Ernesto | 0.4d | F5-03 | ☐ |
+| F5-04 | Tag de versión + GitHub Release + registro en la galería de Reflex | Ernesto | 0.4d | F5-03 | ☐ |
 
 **Criterios de "Done":** `pip install reflex-blossom-carousel` funciona desde PyPI; release tag publicado.
 
@@ -155,7 +155,7 @@ Fase 2: Componente MVP ──▶ Fase 3: Demo + Docs ──▶ Fase 4: Tests + C
 | Errores de SSR/hidratación | Media | Alto | F1-02; fallback `NoSSRComponent` | Ernesto |
 | Cambios de API en upstream npm | Media | Alto | Anclar `^1.1.x`; seguir CHANGELOG; tests | Ernesto |
 | `gh`/PyPI sin credenciales | Alta | Bajo | Configurar auth antes de F5; repo/publish son pasos manuales con token | Ernesto |
-| Reflex en Python 3.14 no soportado | Media | Medio | Proyecto pinneado a 3.13 vía `.python-version` | Ernesto |
+| Cambios incompatibles de Reflex (p. ej. 0.10 eliminó `reflex component` y Python 3.10) | Media | Medio | CI matricial (3.11/3.13/3.14) + compilación de la demo; desarrollo local en 3.13 vía `.python-version` | Ernesto |
 
 ## 6. Comunicación y Seguimiento
 

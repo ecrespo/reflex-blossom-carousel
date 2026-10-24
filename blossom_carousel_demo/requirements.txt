@@ -1,2 +1,2 @@
-
-reflex==0.9.5.post2reflex-blossom-carousel
+reflex==0.10.0
+reflex-blossom-carousel
